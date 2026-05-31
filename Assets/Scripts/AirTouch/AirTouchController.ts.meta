@@ -26,18 +26,39 @@
   ExportUid: 00000000-0000-0000-0000-000000000000
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
+    autoCreateCalibrationPlaneVisual: false
+    calibrationPlaneDepthBiasMeters: false
+    calibrationPlaneMaterial: false
+    calibrationPlaneVisual: false
     clickSmoothing: false
+    cornerHandlePrefab: false
+    cornerHandleScaleMeters: false
     deadzone: false
     debugLogging: false
     dragSmoothing: false
+    enableCalibrationPlaneVisual: false
     enableEditorSimulator: false
+    enableFingertipVisuals: false
+    enablePlaneTouchMode: false
     enableScrollGesture: false
+    enableTwoFingerScroll: false
+    fingertipHoverScale: false
+    fingertipScrollScale: false
+    fingertipTouchScale: false
     handType: false
     hoverSmoothing: false
     hoverThresholdMeters: false
+    maxPredictionUv: false
+    predictionSeconds: false
     reconnectDelaySeconds: false
     scrollSensitivity: false
+    touchReleaseThresholdMeters: false
     touchThresholdMeters: false
+    twoFingerMaxPlaneDeltaMeters: false
+    twoFingerMaxSeparationUv: false
+    twoFingerMinSeparationUv: false
+    twoFingerScrollRequiresPlaneTouch: false
+    twoFingerScrollSensitivity: false
     websocketUrl: false
   ScriptTypesHidden:
     {}
@@ -51,16 +72,37 @@
     - websocketUrl: "ws://127.0.0.1:8765"
       handType: right
       touchThresholdMeters: 0.040000
+      touchReleaseThresholdMeters: 0.065000
       hoverThresholdMeters: 0.120000
-      deadzone: 0.004000
-      hoverSmoothing: 0.200000
-      dragSmoothing: 0.350000
-      clickSmoothing: 0.450000
+      deadzone: 0.002000
+      hoverSmoothing: 0.500000
+      dragSmoothing: 0.680000
+      clickSmoothing: 0.900000
       reconnectDelaySeconds: 1.500000
       debugLogging: true
       enableEditorSimulator: true
-      enableScrollGesture: true
+      enablePlaneTouchMode: true
+      enableScrollGesture: false
+      enableTwoFingerScroll: true
+      twoFingerScrollRequiresPlaneTouch: true
       scrollSensitivity: !<float> 900.000000
+      twoFingerScrollSensitivity: !<float> 1100.000000
+      twoFingerMinSeparationUv: 0.025000
+      twoFingerMaxSeparationUv: 0.220000
+      twoFingerMaxPlaneDeltaMeters: 0.120000
+      predictionSeconds: 0.050000
+      maxPredictionUv: 0.025000
+      enableFingertipVisuals: true
+      fingertipHoverScale: 0.012000
+      fingertipTouchScale: 0.020000
+      fingertipScrollScale: 0.016000
+      enableCalibrationPlaneVisual: true
+      autoCreateCalibrationPlaneVisual: true
+      calibrationPlaneVisual: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      calibrationPlaneMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      calibrationPlaneDepthBiasMeters: 0.001000
+      cornerHandlePrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      cornerHandleScaleMeters: 0.012000
   ScriptTypes:
     -
       {}
@@ -68,13 +110,34 @@
     - '// @input string websocketUrl = "ws://127.0.0.1:8765" {"hint":"Mac companion WebSocket URL. Use your Mac IP on device, for example ws://192.168.1.40:8765."}'
     - '// @input string handType = "right" {"hint":"Tracked hand used for AirTouch. Use right or left."}'
     - '// @input float touchThresholdMeters = 0.04 {"hint":"Meters from calibrated plane considered a touch."}'
+    - '// @input float touchReleaseThresholdMeters = 0.065 {"hint":"Meters from calibrated plane where touch releases. Keep above touchThresholdMeters to avoid click chatter."}'
     - '// @input float hoverThresholdMeters = 0.12 {"hint":"Meters from calibrated plane considered hover range."}'
-    - '// @input float deadzone = 0.004 {"hint":"UV deadzone. Tiny movement below this amount is ignored."}'
-    - '// @input float hoverSmoothing = 0.2 {"hint":"UV smoothing while hovering."}'
-    - '// @input float dragSmoothing = 0.35 {"hint":"UV smoothing while dragging."}'
-    - '// @input float clickSmoothing = 0.45 {"hint":"UV smoothing on the first click frame."}'
+    - '// @input float deadzone = 0.002 {"hint":"UV deadzone. Tiny movement below this amount is ignored."}'
+    - '// @input float hoverSmoothing = 0.5 {"hint":"UV smoothing while hovering."}'
+    - '// @input float dragSmoothing = 0.68 {"hint":"UV smoothing while dragging."}'
+    - '// @input float clickSmoothing = 0.9 {"hint":"UV smoothing on the first click frame."}'
     - '// @input float reconnectDelaySeconds = 1.5 {"hint":"Seconds between WebSocket reconnect attempts."}'
     - '// @input bool debugLogging = true {"hint":"Print calibration, projection, and connection status."}'
     - '// @input bool enableEditorSimulator = true {"hint":"In Lens Studio editor, use preview touch/mouse events as fake pointer packets."}'
-    - '// @input bool enableScrollGesture = true {"hint":"Pinch-drag in the hover band, away from the touch plane, sends desktop scroll wheel events."}'
+    - '// @input bool enablePlaneTouchMode = true {"hint":"Use calibrated screen-plane collision as touch down/up, no pinch required after calibration."}'
+    - '// @input bool enableScrollGesture {"hint":"Pinch-drag in the hover band sends desktop scroll wheel events. Leave off when testing away-pinch click/drag."}'
+    - '// @input bool enableTwoFingerScroll = true {"hint":"Move index and middle fingertips together over the calibrated screen to scroll."}'
+    - '// @input bool twoFingerScrollRequiresPlaneTouch = true {"hint":"When plane touch mode is on, require both fingertips to touch the plane for two-finger scroll."}'
     - '// @input float scrollSensitivity = 900 {"hint":"Scroll wheel units produced by one normalized UV unit of pinch-drag movement."}'
+    - '// @input float twoFingerScrollSensitivity = 1100 {"hint":"Scroll wheel units produced by one normalized UV unit of two-finger movement."}'
+    - '// @input float twoFingerMinSeparationUv = 0.025 {"hint":"Minimum index/middle fingertip separation in UV before two-finger scroll is considered."}'
+    - '// @input float twoFingerMaxSeparationUv = 0.22 {"hint":"Maximum index/middle fingertip separation in UV before two-finger scroll is ignored."}'
+    - '// @input float twoFingerMaxPlaneDeltaMeters = 0.12 {"hint":"Maximum index/middle distance-to-plane difference in meters for two-finger scroll."}'
+    - '// @input float predictionSeconds = 0.05 {"hint":"Seconds of light UV prediction to offset smoothing latency."}'
+    - '// @input float maxPredictionUv = 0.025 {"hint":"Maximum predicted UV offset per frame."}'
+    - '// @input bool enableFingertipVisuals = true {"hint":"Enable optional fingertip visual feedback objects."}'
+    - '// @input float fingertipHoverScale = 0.012 {"hint":"World scale for fingertip visuals while hovering."}'
+    - '// @input float fingertipTouchScale = 0.02 {"hint":"World scale for fingertip visuals while touching/clicking."}'
+    - '// @input float fingertipScrollScale = 0.016 {"hint":"World scale for fingertip visuals while two-finger scrolling."}'
+    - '// @input bool enableCalibrationPlaneVisual = true {"hint":"Show a generated mesh visual for the calibrated screen plane."}'
+    - '// @input bool autoCreateCalibrationPlaneVisual = true {"hint":"Create a default plane visual object if one is not assigned."}'
+    - '// @input SceneObject calibrationPlaneVisual {"hint":"Optional SceneObject used to render the calibrated screen plane."}'
+    - '// @input Asset.Material calibrationPlaneMaterial {"hint":"Optional material used by the generated plane visual."}'
+    - '// @input float calibrationPlaneDepthBiasMeters = 0.001 {"hint":"Small normal offset in meters to reduce z-fighting against real geometry."}'
+    - '// @input Asset.ObjectPrefab cornerHandlePrefab {"hint":"Prefab used to create the four manual calibration corner handles after the first calibration."}'
+    - '// @input float cornerHandleScaleMeters = 0.02 {"hint":"World scale for the calibration corner handles. Increase this if the handles are too hard to grab."}'

@@ -36,6 +36,8 @@ flowchart TD
 - owns lifecycle
 - reads hand tracking
 - coordinates calibration and streaming
+- turns calibrated plane collision into touch down/up when plane touch mode is enabled
+- detects index/middle two-finger scroll
 - provides Lens Studio editor simulation
 
 `ScreenProjection.ts`
@@ -46,7 +48,7 @@ flowchart TD
 `InteractionStateMachine.ts`
 
 - converts inside/out-of-bounds and pinch transitions into pointer phases
-- leaves scroll as a higher-level gesture emitted by `AirTouchController.ts`
+- leaves two-finger scroll as a higher-level gesture emitted by `AirTouchController.ts`
 
 `NetworkSender.ts`
 
@@ -71,6 +73,19 @@ flowchart TD
 `fake_client.py`
 
 - sends test packets to the server over WebSocket
+
+## Transport Notes
+
+The MVP uses WebSocket over local Wi-Fi because it is simple to test from Lens Studio and Spectacles.
+
+Lens Studio's local type definitions expose Bluetooth GATT APIs through `Bluetooth.BluetoothCentralModule`, so BLE support is present at the Lens API level. AirTouch does not currently use BLE. A BLE transport would need:
+
+- a desktop BLE GATT peripheral/server
+- a Lens BLE client module
+- compact binary pointer packets
+- reconnect and MTU handling
+
+BLE may be useful for experiments, but WebSocket is still the recommended low-friction transport for the current cursor MVP.
 
 ## Coordinate System
 

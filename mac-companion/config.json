@@ -4,8 +4,21 @@
   "dry_run": false,
   "release_on_out_of_bounds": true,
   "invert_y": false,
+  "pointer_smoothing": {
+    "enabled": true,
+    "deadzone_pixels": 1.0,
+    "hover_alpha_min": 0.48,
+    "hover_alpha_max": 0.92,
+    "drag_alpha_min": 0.58,
+    "drag_alpha_max": 0.96,
+    "click_snap_alpha": 1.0,
+    "click_hold_pixels": 5,
+    "speed_pixels_for_max_alpha": 45,
+    "scroll_alpha": 0.55
+  },
   "notes": {
     "invert_y": "Set true if your desktop cursor moves vertically opposite to the Lens pointer.",
-    "dry_run": "Set true to print pointer events without moving the real cursor."
+    "dry_run": "Set true to print pointer events without moving the real cursor.",
+    "pointer_smoothing": "Adaptive client-side smoothing. Lower deadzone for more micro movement; raise alpha values for more responsiveness."
   }
 }

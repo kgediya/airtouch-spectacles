@@ -71,16 +71,35 @@ Useful starting values:
 
 ```txt
 touchThresholdMeters = 0.04
+touchReleaseThresholdMeters = 0.065
 hoverThresholdMeters = 0.12
-deadzone = 0.004
-hoverSmoothing = 0.2
-dragSmoothing = 0.35
-clickSmoothing = 0.45
-enableScrollGesture = true
+deadzone = 0.002
+hoverSmoothing = 0.5
+dragSmoothing = 0.68
+clickSmoothing = 0.9
+predictionSeconds = 0.05
+maxPredictionUv = 0.025
+enableTwoFingerScroll = true
+twoFingerScrollRequiresPlaneTouch = true
+twoFingerScrollSensitivity = 1100
+twoFingerMinSeparationUv = 0.025
+twoFingerMaxSeparationUv = 0.22
+twoFingerMaxPlaneDeltaMeters = 0.12
+enableScrollGesture = false
 scrollSensitivity = 900
+enablePlaneTouchMode = true
+enableFingertipVisuals = true
+autoCreateFingertipVisuals = true
+fingertipHoverScale = 0.012
+fingertipTouchScale = 0.02
+fingertipScrollScale = 0.016
 ```
 
 Increase smoothing for steadier but slower movement. Decrease smoothing for faster but noisier movement.
+
+`predictionSeconds` offsets some smoothing latency by lightly projecting the current UV velocity forward. Keep `maxPredictionUv` small so prediction cannot jump far during hand-tracking spikes.
+
+The desktop companion also applies adaptive pixel smoothing. Tune `mac-companion/config.json` if the pointer is steady in Lens logs but still feels jittery on the desktop.
 
 ## Gestures
 
@@ -88,9 +107,28 @@ After calibration:
 
 ```txt
 finger inside screen bounds -> move cursor
-pinch on the touch plane -> mouse down / drag
-release pinch -> mouse up
-pinch and drag slightly away from the touch plane -> scroll
+touch calibrated screen plane -> mouse down
+hold touch + move -> drag
+lift away from plane -> mouse up
+pinch inside screen bounds -> optional mouse down / drag fallback
+index + middle fingertips move together -> scroll
+optional legacy mode: enableScrollGesture, then pinch and drag in the hover band -> scroll
 ```
 
-The scroll gesture uses the hover band between `touchThresholdMeters` and `hoverThresholdMeters`, so normal near-screen pinch drags still behave like mouse drags.
+Plane touch mode is on by default. It uses `touchThresholdMeters` to start touch and `touchReleaseThresholdMeters` to release touch, which gives the virtual screen a little thickness and avoids rapid down/up chatter.
+
+Two-finger scroll uses the midpoint between index and middle fingertips. Keep both fingers projected inside the calibrated screen, with a small natural gap between them.
+
+Away-pinch click/drag is the default. Legacy pinch-scroll uses the same physical pinch-drag motion, so leave `enableScrollGesture` off while testing click and drag from a distance.
+
+## Fingertip Feedback
+
+Fingertip visuals are enabled by default.
+
+```txt
+yellow -> hover / projected inside screen
+green  -> touch or click active
+blue   -> two-finger scroll active
+```
+
+If `indexFingertipVisual` and `middleFingertipVisual` are empty, AirTouch creates simple default markers at runtime. For a nicer look, assign small sphere or ring SceneObjects to those fields; the script will move, scale, enable, and recolor them automatically when possible.

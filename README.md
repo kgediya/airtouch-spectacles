@@ -123,11 +123,36 @@ After calibration:
 
 ```txt
 hover -> cursor move
-pinch -> mouse down
-pinch hold + move -> drag
-pinch hold + move slightly off the touch plane -> scroll
-release -> mouse up
+touch calibrated screen plane -> mouse down
+hold touch + move -> drag
+lift away from plane -> mouse up
+pinch still works as an optional click/drag fallback
+index + middle fingertips move together -> scroll
+optional legacy scroll mode -> pinch hold + move in the hover band scrolls
 ```
+
+Optional confirm gate workflow:
+
+```txt
+after calibration, corner handles + plane visual appear
+move corner handles manually to fine-tune the mapped screen plane
+confirm button appears above the plane
+pinch on the confirm button to enable pointer packet streaming
+confirm button hides after successful confirm
+```
+
+Confirm button integration:
+
+```txt
+AirTouchController does not auto-create the confirm button
+it looks for an existing SceneObject named ConfirmButton
+the controller only toggles ConfirmButton visibility
+wire your button callback to AirTouchController api.confirmAirTouch
+```
+
+Fingertip markers show yellow for hover, green for touch/click, and blue for two-finger scroll. AirTouch creates and manages simple default index/middle fingertip markers automatically.
+
+Manual corner handles and confirm-gate behavior are enabled in the controller by default, with optional callback support on confirm.
 
 ### 5. Move The Real Cursor
 

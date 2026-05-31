@@ -7,6 +7,7 @@ import hashlib
 import json
 import math
 import os
+import socket
 import struct
 import sys
 import threading
@@ -14,7 +15,7 @@ from pathlib import Path
 from platform import system
 from typing import Any, Dict, Optional, Set
 
-from mouse_controller import MouseController, PointerPacket
+from mouse_controller import MouseController, PointerPacket, PointerSmoothingConfig
 
 
 GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
@@ -36,7 +37,11 @@ async def main() -> None:
     port = args.port or int(config.get("port", 8765))
     dry_run = bool(args.dry_run or config.get("dry_run", False))
 
-    mouse = MouseController(dry_run=dry_run, invert_y=bool(config.get("invert_y", False)))
+    mouse = MouseController(
+        dry_run=dry_run,
+        invert_y=bool(config.get("invert_y", False)),
+        smoothing_config=PointerSmoothingConfig.from_config(config),
+    )
 
     server = await asyncio.start_server(
         lambda reader, writer: handle_client(reader, writer, mouse, bool(config.get("release_on_out_of_bounds", True))),
@@ -86,6 +91,7 @@ async def handle_client(
     peer = writer.get_extra_info("peername")
     try:
         await handshake(reader, writer)
+        enable_low_latency_socket(writer)
         CLIENTS.add(writer)
         print(f"client connected: {peer}")
 
@@ -127,6 +133,17 @@ async def handshake(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) 
     )
     writer.write(response.encode("ascii"))
     await writer.drain()
+
+
+def enable_low_latency_socket(writer: asyncio.StreamWriter) -> None:
+    sock = writer.get_extra_info("socket")
+    if sock is None:
+        return
+
+    try:
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+    except OSError:
+        pass
 
 
 async def read_frame(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Optional[str]:

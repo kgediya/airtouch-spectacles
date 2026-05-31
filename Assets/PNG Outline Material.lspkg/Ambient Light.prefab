@@ -1,0 +1,55 @@
+- !<ObjectPrefab/8a49c61b-1860-4cc3-a549-085faec2f86e>
+  PackagePath: ""
+  objects:
+    - !<own> 64a62dbd-a251-4bbc-8965-26a134dbd3b9
+  LazyLoading: false
+  RetainAssets: true
+- !<SceneObject/64a62dbd-a251-4bbc-8965-26a134dbd3b9>
+  PrefabRemaps:
+    - 64a62dbd-a251-4bbc-8965-26a134dbd3b9: 64a62dbd-a251-4bbc-769a-d95ecb242c46
+    - e0b90a51-a027-453f-aafe-f5f8814c7775: e0b90a51-a027-453f-5501-0a077eb3888a
+  Name: Ambient Light
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 65.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> e0b90a51-a027-453f-aafe-f5f8814c7775
+- !<LightSource/e0b90a51-a027-453f-aafe-f5f8814c7775>
+  PrefabRemaps:
+    []
+  Name: Light Source
+  Enabled: true
+  renderLayer: 1835007
+  LightType: Ambient
+  Intensity: 1.000000
+  CastShadows: false
+  ShadowDensity: 1.000000
+  ShadowBlurRadius: 0.000000
+  ShadowTextureSize: 512
+  AutoLightSourcePosition: false
+  AutoShadowFrustumSize: false
+  AutoShadowFrustumSizeExtend: 2.000000
+  ShadowFrustumSize: 30.000000
+  ShadowFrustumNearClipPlane: 1.000000
+  ShadowFrustumFarClipPlane: 1000.000000
+  UseEnvMapFromCamera: false
+  EnvMapFromCameraMode: Auto
+  EstimationSharpness: 1.000000
+  EnvMapExposure: 1.000000
+  EnvMapRotation: 0.000000
+  DiffuseEnvTexture: !<reference> 2013a19b-93c1-4f21-b7ea-876a33550c7b
+  SpecularEnvTexture: !<reference> d795fd46-e16b-4cb9-8dfb-4ef227298f7a
+  Color: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowColor: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+  DynamicEnvInputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  InnerConeAngle: 0.000000
+  OuterConeAngle: 45.000000
+  DecayType: None
+  DecayLimit: false
+  DecayRange: 40.000000

@@ -103,3 +103,21 @@ On Windows, use:
 py server.py --dry-run --fake-hand
 py server.py --fake-hand
 ```
+
+## Pointer Precision
+
+Client-side pointer smoothing is configured in `mac-companion/config.json`.
+
+The defaults are tuned for small UI targets:
+
+```txt
+deadzone_pixels = 1.0
+hover_alpha_min = 0.48
+hover_alpha_max = 0.92
+drag_alpha_min = 0.58
+drag_alpha_max = 0.96
+click_snap_alpha = 1.0
+click_hold_pixels = 5
+```
+
+If clicking small controls turns into accidental drags, raise `click_hold_pixels` toward `7`. If the cursor jitters while hovering, raise `deadzone_pixels` toward `2.0` or lower `hover_alpha_min`.

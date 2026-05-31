@@ -19,9 +19,9 @@ export class InteractionStateMachine {
   }
 
   update(projection: ScreenProjectionResult | null, pinching: boolean): InteractionUpdate {
-    const inside = projection !== null && projection.insideBounds && projection.nearPlane
+    const insideBounds = projection !== null && projection.insideBounds
 
-    if (!inside) {
+    if (!insideBounds) {
       const shouldRelease = this.dragging || this.wasPinching
       this.wasPinching = false
       this.dragging = false

@@ -3,7 +3,7 @@ from __future__ import annotations
 import platform
 import ctypes
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 
 @dataclass(frozen=True)
@@ -17,14 +17,59 @@ class PointerPacket:
     scroll_y: float = 0.0
 
 
+@dataclass(frozen=True)
+class PointerSmoothingConfig:
+    enabled: bool = True
+    deadzone_pixels: float = 1.0
+    hover_alpha_min: float = 0.48
+    hover_alpha_max: float = 0.92
+    drag_alpha_min: float = 0.58
+    drag_alpha_max: float = 0.96
+    click_snap_alpha: float = 1.0
+    click_hold_pixels: float = 5.0
+    speed_pixels_for_max_alpha: float = 45.0
+    scroll_alpha: float = 0.55
+
+    @classmethod
+    def from_config(cls, config: Dict[str, Any]) -> "PointerSmoothingConfig":
+        smoothing = config.get("pointer_smoothing", {})
+        if not isinstance(smoothing, dict):
+            smoothing = {}
+
+        return cls(
+            enabled=bool(smoothing.get("enabled", cls.enabled)),
+            deadzone_pixels=float(smoothing.get("deadzone_pixels", cls.deadzone_pixels)),
+            hover_alpha_min=float(smoothing.get("hover_alpha_min", cls.hover_alpha_min)),
+            hover_alpha_max=float(smoothing.get("hover_alpha_max", cls.hover_alpha_max)),
+            drag_alpha_min=float(smoothing.get("drag_alpha_min", cls.drag_alpha_min)),
+            drag_alpha_max=float(smoothing.get("drag_alpha_max", cls.drag_alpha_max)),
+            click_snap_alpha=float(smoothing.get("click_snap_alpha", cls.click_snap_alpha)),
+            click_hold_pixels=float(smoothing.get("click_hold_pixels", cls.click_hold_pixels)),
+            speed_pixels_for_max_alpha=float(
+                smoothing.get("speed_pixels_for_max_alpha", cls.speed_pixels_for_max_alpha)
+            ),
+            scroll_alpha=float(smoothing.get("scroll_alpha", cls.scroll_alpha)),
+        )
+
+
 class MouseController:
-    def __init__(self, dry_run: bool = False, invert_y: bool = False) -> None:
+    def __init__(
+        self,
+        dry_run: bool = False,
+        invert_y: bool = False,
+        smoothing_config: PointerSmoothingConfig | None = None,
+    ) -> None:
         self.dry_run = dry_run
         self.invert_y = invert_y
+        self.smoothing = smoothing_config or PointerSmoothingConfig()
         self._mouse_down = False
         self._platform = platform.system().lower()
         self._quartz = None
         self._user32 = None
+        self._filtered_point: Tuple[float, float] | None = None
+        self._filtered_scroll: Tuple[float, float] = (0.0, 0.0)
+        self._mouse_down_point: Tuple[int, int] | None = None
+        self._drag_started = False
 
         if self.dry_run:
             return
@@ -71,33 +116,42 @@ class MouseController:
         u = _clamp01(packet.u)
         v = _clamp01(1.0 - packet.v if self.invert_y else packet.v)
         width, height = self.screen_size()
-        point = (round(u * (width - 1)), round(v * (height - 1)))
+        raw_point = (u * (width - 1), v * (height - 1))
 
         if packet.phase == "scroll":
+            point = self._filtered(raw_point, mode="hover")
             if self._mouse_down:
                 self._mouse_up(point)
             self._move(point)
-            self._scroll(packet.scroll_x, packet.scroll_y)
+            self._scroll(packet.scroll_x, packet.scroll_y, smooth=True)
             return
 
         if packet.phase == "outOfBounds":
             if self._mouse_down:
-                self._mouse_up(point)
+                self._mouse_up(self._rounded_current_position())
+            self._filtered_point = None
             return
 
         if packet.phase == "down" or (packet.pinch and not self._mouse_down):
+            point = self._filtered(raw_point, mode="down")
             self._move(point)
             self._mouse_down_at(point)
             return
 
         if packet.phase == "drag" or (packet.pinch and self._mouse_down):
+            point = self._filtered(raw_point, mode="drag")
+            self._drag_started = self._drag_started or self._moved_from_mouse_down(point)
             self._drag(point)
             return
 
         if packet.phase == "up" or (not packet.pinch and self._mouse_down):
+            point = self._filtered(raw_point, mode="drag")
+            if not self._drag_started and self._mouse_down_point is not None:
+                point = self._mouse_down_point
             self._mouse_up(point)
             return
 
+        point = self._filtered(raw_point, mode="hover")
         self._move(point)
 
     def release_if_needed(self) -> None:
@@ -109,6 +163,8 @@ class MouseController:
 
     def _mouse_down_at(self, point: Tuple[int, int]) -> None:
         self._mouse_down = True
+        self._mouse_down_point = point
+        self._drag_started = False
         self._post("down", point)
 
     def _drag(self, point: Tuple[int, int]) -> None:
@@ -116,10 +172,71 @@ class MouseController:
 
     def _mouse_up(self, point: Tuple[int, int]) -> None:
         self._mouse_down = False
+        self._mouse_down_point = None
+        self._drag_started = False
         self._post("up", point)
 
-    def _scroll(self, scroll_x: float, scroll_y: float) -> None:
+    def _scroll(self, scroll_x: float, scroll_y: float, smooth: bool = False) -> None:
+        if smooth and self.smoothing.enabled:
+            previous_x, previous_y = self._filtered_scroll
+            scroll_x = _lerp(previous_x, scroll_x, self.smoothing.scroll_alpha)
+            scroll_y = _lerp(previous_y, scroll_y, self.smoothing.scroll_alpha)
+            self._filtered_scroll = (scroll_x, scroll_y)
         self._post_scroll(round(scroll_x), round(scroll_y))
+
+    def _filtered(self, raw_point: Tuple[float, float], mode: str) -> Tuple[int, int]:
+        if not self.smoothing.enabled:
+            self._filtered_point = raw_point
+            return _round_point(raw_point)
+
+        if self._filtered_point is None:
+            self._filtered_point = raw_point
+            return _round_point(raw_point)
+
+        previous = self._filtered_point
+        distance = _distance(previous, raw_point)
+
+        if distance < self.smoothing.deadzone_pixels:
+            return _round_point(previous)
+
+        if mode == "down":
+            alpha = self.smoothing.click_snap_alpha
+        elif mode == "drag":
+            alpha = self._adaptive_alpha(
+                distance,
+                self.smoothing.drag_alpha_min,
+                self.smoothing.drag_alpha_max,
+            )
+        else:
+            alpha = self._adaptive_alpha(
+                distance,
+                self.smoothing.hover_alpha_min,
+                self.smoothing.hover_alpha_max,
+            )
+
+        filtered = (
+            _lerp(previous[0], raw_point[0], alpha),
+            _lerp(previous[1], raw_point[1], alpha),
+        )
+        self._filtered_point = filtered
+        return _round_point(filtered)
+
+    def _adaptive_alpha(self, distance: float, minimum: float, maximum: float) -> float:
+        if self.smoothing.speed_pixels_for_max_alpha <= 0:
+            return _clamp(maximum, 0.0, 1.0)
+
+        speed_t = _clamp(distance / self.smoothing.speed_pixels_for_max_alpha, 0.0, 1.0)
+        return _clamp(_lerp(minimum, maximum, speed_t), 0.0, 1.0)
+
+    def _rounded_current_position(self) -> Tuple[int, int]:
+        if self._filtered_point is not None:
+            return _round_point(self._filtered_point)
+        return self._current_position()
+
+    def _moved_from_mouse_down(self, point: Tuple[int, int]) -> bool:
+        if self._mouse_down_point is None:
+            return False
+        return _distance(self._mouse_down_point, point) >= self.smoothing.click_hold_pixels
 
     def _post(self, action: str, point: Tuple[int, int]) -> None:
         if self.dry_run:
@@ -203,3 +320,21 @@ class _WindowsPoint(ctypes.Structure):
 
 def _clamp01(value: float) -> float:
     return max(0.0, min(1.0, value))
+
+
+def _clamp(value: float, minimum: float, maximum: float) -> float:
+    return max(minimum, min(maximum, value))
+
+
+def _lerp(start: float, end: float, alpha: float) -> float:
+    return start + (end - start) * alpha
+
+
+def _distance(start: Tuple[float, float], end: Tuple[float, float]) -> float:
+    delta_x = end[0] - start[0]
+    delta_y = end[1] - start[1]
+    return (delta_x * delta_x + delta_y * delta_y) ** 0.5
+
+
+def _round_point(point: Tuple[float, float]) -> Tuple[int, int]:
+    return (round(point[0]), round(point[1]))

@@ -10,7 +10,7 @@ The Lens flow is:
 4. Smooth and deadzone UV values.
 5. Send pointer packets over WebSocket.
 
-The desktop companion receives packets, maps `u` and `v` to the main display, and posts platform mouse events for movement, clicks, drags, and scroll.
+The Lens can operate in plane touch mode: after four-corner calibration, fingertip collision with the calibrated screen plane sends click and drag packets without requiring pinch. The desktop companion receives packets, maps `u` and `v` to the main display, and posts platform mouse events for movement, clicks, drags, and optional scroll.
 
 MVP packet:
 

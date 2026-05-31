@@ -75,6 +75,6 @@ down         pinch started
 move         pointer moved without pinch
 drag         pinch held while moving
 up           pinch released
-scroll       pinch held in the hover band and dragged for wheel input
+scroll       wheel input, usually from two-finger index/middle movement
 outOfBounds  pointer left calibrated bounds; desktop releases mouse if needed
 ```

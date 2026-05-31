@@ -140,8 +140,13 @@ Expected:
 
 ```txt
 cursor moves
-pinch/click presses
-pinch hold drags
-hover-band pinch drag scrolls
+touching the calibrated plane clicks
+holding touch and moving drags
+lifting away releases
+index fingertip visual turns green while touching/clicking
+two fingertip visuals turn blue while scrolling
+pinch/click fallback still presses
+index + middle fingertips moving together scroll
+optional: enableScrollGesture makes hover-band pinch drag scroll
 release stops drag
 ```
