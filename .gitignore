@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node / TypeScript
+node_modules/
+*.tsbuildinfo
+
+# Lens Studio generated/local state
+Cache/
+*.lock
+PluginsUserPreferences/
+Workspaces/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+# Lens Studio
+Backup/
+
+# JavaScript / Node
+yarn.lock
+package-lock.json
+
+*$py.class
+
+# Plugin secrets
+.github-konnect.env

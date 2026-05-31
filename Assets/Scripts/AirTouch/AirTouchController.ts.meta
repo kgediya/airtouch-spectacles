@@ -1,0 +1,80 @@
+- !<AssetImportMetadata/e6b6b601-e206-466d-84ef-55d34352cee7>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 532271ae-8ea5-4aee-b2d7-65819e9a9cd8
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 532271ae-8ea5-4aee-b2d7-65819e9a9cd8
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 453a7571-bca4-4a21-9d58-40ad727403a4
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/453a7571-bca4-4a21-9d58-40ad727403a4>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: f10e108d-80f4-493a-be8b-651a337fe056
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    clickSmoothing: false
+    deadzone: false
+    debugLogging: false
+    dragSmoothing: false
+    enableEditorSimulator: false
+    enableScrollGesture: false
+    handType: false
+    hoverSmoothing: false
+    hoverThresholdMeters: false
+    reconnectDelaySeconds: false
+    scrollSensitivity: false
+    touchThresholdMeters: false
+    websocketUrl: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - websocketUrl: "ws://127.0.0.1:8765"
+      handType: right
+      touchThresholdMeters: 0.040000
+      hoverThresholdMeters: 0.120000
+      deadzone: 0.004000
+      hoverSmoothing: 0.200000
+      dragSmoothing: 0.350000
+      clickSmoothing: 0.450000
+      reconnectDelaySeconds: 1.500000
+      debugLogging: true
+      enableEditorSimulator: true
+      enableScrollGesture: true
+      scrollSensitivity: !<float> 900.000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @input string websocketUrl = "ws://127.0.0.1:8765" {"hint":"Mac companion WebSocket URL. Use your Mac IP on device, for example ws://192.168.1.40:8765."}'
+    - '// @input string handType = "right" {"hint":"Tracked hand used for AirTouch. Use right or left."}'
+    - '// @input float touchThresholdMeters = 0.04 {"hint":"Meters from calibrated plane considered a touch."}'
+    - '// @input float hoverThresholdMeters = 0.12 {"hint":"Meters from calibrated plane considered hover range."}'
+    - '// @input float deadzone = 0.004 {"hint":"UV deadzone. Tiny movement below this amount is ignored."}'
+    - '// @input float hoverSmoothing = 0.2 {"hint":"UV smoothing while hovering."}'
+    - '// @input float dragSmoothing = 0.35 {"hint":"UV smoothing while dragging."}'
+    - '// @input float clickSmoothing = 0.45 {"hint":"UV smoothing on the first click frame."}'
+    - '// @input float reconnectDelaySeconds = 1.5 {"hint":"Seconds between WebSocket reconnect attempts."}'
+    - '// @input bool debugLogging = true {"hint":"Print calibration, projection, and connection status."}'
+    - '// @input bool enableEditorSimulator = true {"hint":"In Lens Studio editor, use preview touch/mouse events as fake pointer packets."}'
+    - '// @input bool enableScrollGesture = true {"hint":"Pinch-drag in the hover band, away from the touch plane, sends desktop scroll wheel events."}'
+    - '// @input float scrollSensitivity = 900 {"hint":"Scroll wheel units produced by one normalized UV unit of pinch-drag movement."}'

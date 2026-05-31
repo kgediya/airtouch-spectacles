@@ -1,0 +1,11 @@
+{
+  "host": "0.0.0.0",
+  "port": 8765,
+  "dry_run": false,
+  "release_on_out_of_bounds": true,
+  "invert_y": false,
+  "notes": {
+    "invert_y": "Set true if your desktop cursor moves vertically opposite to the Lens pointer.",
+    "dry_run": "Set true to print pointer events without moving the real cursor."
+  }
+}
