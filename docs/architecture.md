@@ -12,10 +12,14 @@ flowchart TD
     A --> C[Pinch events and hold state]
     B --> D[Four-corner calibration]
     D --> E[Screen plane]
-    E --> F[Project fingertip to UV]
+    E --> F[Project fingertips to UV]
+    E --> O[MeshBuilder plane visual]
+    E --> P[Manual corner handles]
+    P --> E
     C --> G[Interaction state machine]
     F --> G
-    G --> H[WebSocket JSON packet]
+    G --> Q[Confirm gate]
+    Q --> H[WebSocket JSON packet]
   end
 
   subgraph Desktop["Desktop Companion"]
@@ -38,6 +42,9 @@ flowchart TD
 - coordinates calibration and streaming
 - turns calibrated plane collision into touch down/up when plane touch mode is enabled
 - detects index/middle two-finger scroll
+- builds and updates the calibration plane visual with `MeshBuilder`
+- places optional manual corner handles when `cornerHandlePrefab` is assigned
+- exposes confirm/recalibrate callbacks through `api`
 - provides Lens Studio editor simulation
 
 `ScreenProjection.ts`
@@ -69,6 +76,7 @@ flowchart TD
 
 - maps normalized `u/v` to screen pixels
 - dispatches platform mouse and scroll events
+- applies adaptive pixel smoothing and tap anchoring for small targets
 
 `fake_client.py`
 
@@ -102,3 +110,16 @@ The desktop companion maps them to:
 x = u * (screenWidth - 1)
 y = v * (screenHeight - 1)
 ```
+
+## Calibration Flow
+
+```txt
+pinch four corners
+build screen plane
+show MeshBuilder plane visual
+place optional corner handles
+wait for confirm button callback
+stream pointer packets
+```
+
+The confirm gate keeps the desktop cursor idle while the user fine-tunes the plane. Calling `api.confirmAirTouch` enables packet streaming.

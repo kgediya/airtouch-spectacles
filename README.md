@@ -14,6 +14,9 @@ MVP implemented:
 - Four-corner pinch calibration
 - 3D fingertip projection to normalized UV coordinates
 - smoothing and deadzone
+- plane-touch mode for no-pinch click and drag
+- MeshBuilder calibration plane visual
+- optional manual corner handles and confirm-gated streaming
 - WebSocket streaming
 - macOS cursor movement, click, drag, and scroll
 - Windows cursor movement, click, drag, and scroll
@@ -25,6 +28,7 @@ Not implemented yet:
 
 - multi-touch
 - pinch zoom gestures
+- active fingertip marker rendering
 - persistent anchors
 - automatic screen detection
 - polished in-Lens UI
@@ -51,9 +55,11 @@ flowchart LR
 ```txt
 AirTouch/
 ├── Assets/Scripts/AirTouch/       Lens Studio TypeScript
+├── Assets/Prefabs/                Optional Lens-side helper prefabs
 ├── mac-companion/                 Cross-platform desktop companion
 ├── docs/                          Architecture, protocol, setup, testing
 ├── tsconfig.airtouch.json         Focused TypeScript check for AirTouch scripts
+├── LICENSE.md
 └── README.md
 ```
 
@@ -150,9 +156,11 @@ the controller only toggles ConfirmButton visibility
 wire your button callback to AirTouchController api.confirmAirTouch
 ```
 
-Fingertip markers show yellow for hover, green for touch/click, and blue for two-finger scroll. AirTouch creates and manages simple default index/middle fingertip markers automatically.
+Fingertip visual inputs are present for future authored feedback, but active fingertip marker rendering is currently disabled.
 
 Manual corner handles and confirm-gate behavior are enabled in the controller by default, with optional callback support on confirm.
+
+The calibrated plane visual is generated with Lens Studio `MeshBuilder` and can use `calibrationPlaneMaterial` for consistent visibility.
 
 ### 5. Move The Real Cursor
 
@@ -238,6 +246,8 @@ The Lens auto-normalizes local URLs like `ws://192.168.0.179` to `ws://192.168.0
 - [Protocol](docs/protocol.md)
 - [Testing Checklist](docs/testing-checklist.md)
 - [Concept Note](docs/concept-note.md)
+- [Development](docs/development.md)
+- [Contributing](CONTRIBUTING.md)
 
 ## Development
 
@@ -250,4 +260,4 @@ PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile mac-companion/se
 
 ## License
 
-This project follows the repository license in `../LICENSE.md`.
+This project is released under the terms in [LICENSE.md](LICENSE.md). Lens Studio, Spectacles, Spectacles Interaction Kit, and related Snap/Specs developer tools remain subject to their own terms.

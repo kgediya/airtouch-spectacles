@@ -11,6 +11,12 @@ Linux is currently dry-run only.
 
 ## Run
 
+From this directory:
+
+```bash
+cd mac-companion
+```
+
 Dry-run:
 
 ```bash

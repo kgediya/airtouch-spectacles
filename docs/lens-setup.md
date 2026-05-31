@@ -55,6 +55,23 @@ The Lens logs:
 [AirTouch] calibration complete
 ```
 
+After the four pinches, AirTouch shows the generated calibration plane and any available corner handles. The plane is built with `MeshBuilder` from the four calibrated points. Assign `calibrationPlaneMaterial` for predictable color/opacity.
+
+If `cornerHandlePrefab` is assigned, the Lens places one handle at each corner. Move those handles to fine-tune the screen bounds before confirming.
+
+Packet streaming is confirm-gated by default. Create or keep a SceneObject named `ConfirmButton`, then wire its button callback to:
+
+```txt
+AirTouchController.api.confirmAirTouch
+```
+
+The controller also exposes:
+
+```txt
+AirTouchController.api.recalibrateAirTouch
+AirTouchController.api.onConfirmButtonTriggered
+```
+
 ## Recalibration
 
 In the desktop companion terminal, type:
@@ -88,11 +105,13 @@ twoFingerMaxPlaneDeltaMeters = 0.12
 enableScrollGesture = false
 scrollSensitivity = 900
 enablePlaneTouchMode = true
-enableFingertipVisuals = true
-autoCreateFingertipVisuals = true
 fingertipHoverScale = 0.012
 fingertipTouchScale = 0.02
 fingertipScrollScale = 0.016
+enableCalibrationPlaneVisual = true
+autoCreateCalibrationPlaneVisual = true
+calibrationPlaneDepthBiasMeters = 0.001
+cornerHandleScaleMeters = 0.02
 ```
 
 Increase smoothing for steadier but slower movement. Decrease smoothing for faster but noisier movement.
@@ -123,7 +142,7 @@ Away-pinch click/drag is the default. Legacy pinch-scroll uses the same physical
 
 ## Fingertip Feedback
 
-Fingertip visuals are enabled by default.
+Fingertip visual scale settings exist in the controller, but active runtime marker rendering is currently disabled in code. Treat these settings as placeholders for authored Lens-side feedback.
 
 ```txt
 yellow -> hover / projected inside screen
@@ -131,4 +150,18 @@ green  -> touch or click active
 blue   -> two-finger scroll active
 ```
 
-If `indexFingertipVisual` and `middleFingertipVisual` are empty, AirTouch creates simple default markers at runtime. For a nicer look, assign small sphere or ring SceneObjects to those fields; the script will move, scale, enable, and recolor them automatically when possible.
+When this feature is re-enabled, use small sphere or ring SceneObjects for index/middle feedback and drive them from the controller state.
+
+## Plane Visual
+
+`enableCalibrationPlaneVisual` is on by default. AirTouch creates or reuses a `RenderMeshVisual` and updates its mesh with `MeshBuilder` whenever calibration points or manual corner handles change.
+
+Useful inputs:
+
+```txt
+calibrationPlaneVisual          optional SceneObject that hosts the RenderMeshVisual
+calibrationPlaneMaterial        material for the generated plane mesh
+calibrationPlaneDepthBiasMeters small offset to avoid z-fighting
+```
+
+The mesh is only a visual/debug surface. Touch detection still uses the calibrated plane math from `ScreenProjection.ts`.

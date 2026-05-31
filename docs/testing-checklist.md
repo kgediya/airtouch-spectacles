@@ -112,7 +112,22 @@ Expected Lens log:
 [AirTouch] calibration complete
 ```
 
-Move finger and pinch.
+Expected Lens scene:
+
+```txt
+calibration plane visual appears
+corner handles appear if cornerHandlePrefab is assigned
+confirm button appears if a ConfirmButton SceneObject exists
+```
+
+Confirm:
+
+```txt
+pinch / activate ConfirmButton
+or call AirTouchController.api.confirmAirTouch
+```
+
+Move finger, touch the plane, and test two-finger scroll.
 
 Expected companion output:
 
@@ -120,10 +135,10 @@ Expected companion output:
 move/down/drag/up/scroll
 ```
 
-Scroll test:
+Two-finger scroll test:
 
 ```txt
-pinch and drag while your fingertip is slightly away from the screen plane, inside the hover band
+touch index and middle fingertips to the calibrated plane and move them together
 ```
 
 ## Real Cursor
@@ -143,10 +158,10 @@ cursor moves
 touching the calibrated plane clicks
 holding touch and moving drags
 lifting away releases
-index fingertip visual turns green while touching/clicking
-two fingertip visuals turn blue while scrolling
 pinch/click fallback still presses
 index + middle fingertips moving together scroll
 optional: enableScrollGesture makes hover-band pinch drag scroll
 release stops drag
 ```
+
+Fingertip marker rendering is not part of the current acceptance checklist; the controller has placeholder settings, but active marker updates are disabled.
