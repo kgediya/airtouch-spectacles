@@ -107,7 +107,7 @@
     -
       {}
   InputLines:
-    - '// @input string websocketUrl = "ws://127.0.0.1:8765" {"hint":"Mac companion WebSocket URL. Use your Mac IP on device, for example ws://192.168.1.40:8765."}'
+    - '// @input string websocketUrl = "ws://127.0.0.1:8765" {"hint":"Desktop companion WebSocket URL. Use your desktop IP on device, for example ws://192.168.1.40:8765."}'
     - '// @input string handType = "right" {"hint":"Tracked hand used for AirTouch. Use right or left."}'
     - '// @input float touchThresholdMeters = 0.04 {"hint":"Meters from calibrated plane considered a touch."}'
     - '// @input float touchReleaseThresholdMeters = 0.065 {"hint":"Meters from calibrated plane where touch releases. Keep above touchThresholdMeters to avoid click chatter."}'

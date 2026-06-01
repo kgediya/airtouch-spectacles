@@ -35,13 +35,13 @@ tsc --project tsconfig.airtouch.json
 Run Python syntax checks:
 
 ```bash
-PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile mac-companion/server.py mac-companion/mouse_controller.py mac-companion/fake_client.py
+PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py
 ```
 
 Windows:
 
 ```powershell
-py -m py_compile mac-companion/server.py mac-companion/mouse_controller.py mac-companion/fake_client.py
+py -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py
 ```
 
 ## Project Boundaries
@@ -49,8 +49,8 @@ py -m py_compile mac-companion/server.py mac-companion/mouse_controller.py mac-c
 Keep runtime code separated by platform:
 
 ```txt
-Assets/Scripts/AirTouch/   Lens Studio / Spectacles code
-mac-companion/             desktop receiver and OS mouse injection
+Assets/Scripts/            Lens Studio / Spectacles code
+desktop-companion/         desktop receiver and OS mouse injection
 docs/                      user-facing setup and architecture docs
 ```
 

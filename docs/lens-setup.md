@@ -9,7 +9,7 @@ Enable Experimental API mode in Lens Studio before running the Lens. AirTouch us
 Attach this script to a scene object:
 
 ```txt
-Assets/Scripts/AirTouch/AirTouchController.ts
+Assets/Scripts/AirTouchController.ts
 ```
 
 Set:
@@ -118,7 +118,7 @@ Increase smoothing for steadier but slower movement. Decrease smoothing for fast
 
 `predictionSeconds` offsets some smoothing latency by lightly projecting the current UV velocity forward. Keep `maxPredictionUv` small so prediction cannot jump far during hand-tracking spikes.
 
-The desktop companion also applies adaptive pixel smoothing. Tune `mac-companion/config.json` if the pointer is steady in Lens logs but still feels jittery on the desktop.
+The desktop companion also applies adaptive pixel smoothing. Tune `desktop-companion/config.json` if the pointer is steady in Lens logs but still feels jittery on the desktop.
 
 ## Gestures
 

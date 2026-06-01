@@ -84,9 +84,9 @@ flowchart LR
 
 ```txt
 AirTouch/
-├── Assets/Scripts/AirTouch/       Lens Studio TypeScript
-├── Assets/Prefabs/                optional Lens helper prefabs
-├── mac-companion/                 cross-platform desktop companion
+├── Assets/Scripts/                Lens Studio TypeScript
+├── Assets/Other Resources/        optional Lens helper prefabs and resources
+├── desktop-companion/             cross-platform desktop companion
 ├── docs/                          setup, protocol, architecture, testing
 ├── AirTouch.esproj                Lens Studio project
 ├── tsconfig.airtouch.json         focused AirTouch TypeScript check
@@ -94,7 +94,7 @@ AirTouch/
 └── README.md
 ```
 
-The folder is named `mac-companion` for historical reasons. It supports macOS and Windows.
+The desktop companion supports macOS and Windows.
 
 ## Quick Start
 
@@ -103,14 +103,14 @@ The folder is named `mac-companion` for historical reasons. It supports macOS an
 macOS:
 
 ```bash
-cd mac-companion
+cd desktop-companion
 python3 server.py --dry-run
 ```
 
 Windows:
 
 ```powershell
-cd mac-companion
+cd desktop-companion
 py server.py --dry-run
 ```
 
@@ -213,7 +213,7 @@ Plane touch uses hysteresis: `touchThresholdMeters` starts the press, `touchRele
 
 ## Desktop Precision
 
-The desktop companion smooths pointer input in pixel space before injecting OS events. Defaults live in [mac-companion/config.json](mac-companion/config.json):
+The desktop companion smooths pointer input in pixel space before injecting OS events. Defaults live in [desktop-companion/config.json](desktop-companion/config.json):
 
 ```json
 {
@@ -249,7 +249,7 @@ If raw input is fast but shaky, turn smoothing back on and tune `deadzone_pixels
 Desktop-only fake packets:
 
 ```bash
-cd mac-companion
+cd desktop-companion
 python3 server.py --dry-run
 python3 fake_client.py
 python3 fake_client.py --drag
@@ -259,7 +259,7 @@ python3 fake_client.py --scroll
 Windows:
 
 ```powershell
-cd mac-companion
+cd desktop-companion
 py server.py --dry-run
 py fake_client.py --drag
 ```
@@ -308,14 +308,14 @@ Run checks:
 
 ```bash
 tsc --project tsconfig.airtouch.json
-PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile mac-companion/server.py mac-companion/mouse_controller.py mac-companion/fake_client.py
+PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py
 ```
 
 Windows:
 
 ```powershell
 tsc --project tsconfig.airtouch.json
-py -m py_compile mac-companion/server.py mac-companion/mouse_controller.py mac-companion/fake_client.py
+py -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py
 ```
 
 Useful docs:

@@ -5,7 +5,7 @@
 Start dry-run:
 
 ```bash
-cd mac-companion
+cd desktop-companion
 python3 server.py --dry-run
 ```
 

@@ -14,7 +14,7 @@ Linux is currently dry-run only.
 From this directory:
 
 ```bash
-cd mac-companion
+cd desktop-companion
 ```
 
 Dry-run:

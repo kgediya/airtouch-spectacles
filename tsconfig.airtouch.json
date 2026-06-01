@@ -24,9 +24,9 @@
     "./Cache/TypeScript/lib/LensifyTS/Declarations/Decorators.d.ts",
     "./Cache/TypeScript/lib/LensifyTS/Declarations/StudioLib.d.ts",
     "./Cache/TypeScript/lib/LensifyTS/Declarations/UIControl.d.ts",
-    "./Assets/Scripts/AirTouch/AirTouchController.ts",
-    "./Assets/Scripts/AirTouch/InteractionStateMachine.ts",
-    "./Assets/Scripts/AirTouch/NetworkSender.ts",
-    "./Assets/Scripts/AirTouch/ScreenProjection.ts"
+    "./Assets/Scripts/AirTouchController.ts",
+    "./Assets/Scripts/InteractionStateMachine.ts",
+    "./Assets/Scripts/NetworkSender.ts",
+    "./Assets/Scripts/ScreenProjection.ts"
   ]
 }

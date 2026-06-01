@@ -11,7 +11,7 @@ type CornerHandleMap = Record<CalibrationCorner, SceneObject>
 @component
 export class AirTouchController extends BaseScriptComponent {
   @input
-  @hint("Mac companion WebSocket URL. Use your Mac IP on device, for example ws://192.168.1.40:8765.")
+  @hint("Desktop companion WebSocket URL. Use your desktop IP on device, for example ws://192.168.1.40:8765.")
   private websocketUrl: string = "ws://127.0.0.1:8765"
 
   @input

@@ -5,13 +5,13 @@
 Install optional Quartz bridge:
 
 ```bash
-python3 -m pip install --user -r mac-companion/requirements-macos.txt
+python3 -m pip install --user -r desktop-companion/requirements-macos.txt
 ```
 
 Run dry-run:
 
 ```bash
-cd mac-companion
+cd desktop-companion
 python3 server.py --dry-run
 ```
 
@@ -50,7 +50,7 @@ Python 3 is required. No mouse-control package is required.
 Run dry-run:
 
 ```powershell
-cd mac-companion
+cd desktop-companion
 py server.py --dry-run
 ```
 
@@ -106,7 +106,7 @@ py server.py --fake-hand
 
 ## Pointer Precision
 
-Client-side pointer smoothing is configured in `mac-companion/config.json`.
+Client-side pointer smoothing is configured in `desktop-companion/config.json`.
 
 The defaults are tuned for small UI targets:
 

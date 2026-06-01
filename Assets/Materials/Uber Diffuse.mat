@@ -89,7 +89,7 @@
       value: 0.010000
     Port_EdgeThickness_N000:
       typeIdx: 1
-      value: 0.010000
+      value: 0.005000
     PreviewEnabled:
       typeIdx: 0
       value: 0

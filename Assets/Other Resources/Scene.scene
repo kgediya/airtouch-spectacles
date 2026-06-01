@@ -4,6 +4,7 @@
     - !<own> 00000000-0000-0065-0000-000000000064
     - !<own> 5aa0f98b-e799-448c-a2dc-cae5d04fa2a4
     - !<own> 0005641c-028d-459a-0000-000000014b4d
+    - !<own> 0005641c-028d-4630-0000-000000014b56
     - !<own> 5e83f1e0-1778-409d-a5a9-2a274b56a5f8
     - !<own> a58b1b6e-6a22-4ea8-ae49-ee0bd3ca41f4
     - !<own> 59da72f8-e957-4fc1-810a-9597906c2e73
@@ -76,7 +77,6 @@
     HasSegmentScaleCompensation: false
   Children:
     - !<own> 00056e79-b066-62ca-0000-000000001406
-    - !<own> 0005641c-028d-4630-0000-000000014b56
   Components:
     []
 - !<SceneObject/0005641c-028d-4630-0000-000000014b56>
@@ -129,7 +129,8 @@
   DecayRange: 40.000000
 - !<SceneObject/00056e79-b066-62ca-0000-000000001406>
   PrefabRemaps:
-    []
+    - 00056e79-b066-62ca-0000-000000001406: 64a62dbd-a251-4bbc-769a-d95ecb242c46
+    - 00056e79-b066-62f1-0000-000000001409: e0b90a51-a027-453f-5501-0a077eb3888a
   Name: Ambient Light
   Enabled: true
   Layers: 1
@@ -770,6 +771,7 @@
   Enabled: true
   ScriptAsset: !<reference> f9b29b39-ec8c-41bd-8b53-769ae9b818b8
   ScriptInputsDefault:
+    debugModeEnabled: true
     selectVisual: true
     handMeshPin: true
     handMeshRenderOrder: true
@@ -820,7 +822,7 @@
     {}
   ScriptInputs:
     "":
-      debugModeEnabled: true
+      debugModeEnabled: false
       handType: right
       _meshType: IndexThumb
       selectVisual: Default
@@ -954,7 +956,6 @@
     fingertipScrollScale: true
     enableCalibrationPlaneVisual: true
     autoCreateCalibrationPlaneVisual: true
-    cornerHandleScaleMeters: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -990,9 +991,9 @@
       autoCreateCalibrationPlaneVisual: true
       calibrationPlaneVisual: !<reference.SceneObject> a58b1b6e-6a22-4ea8-ae49-ee0bd3ca41f4
       calibrationPlaneMaterial: !<reference.Material> a9151612-7822-4d5a-85a2-af0a65b32e5b
-      calibrationPlaneDepthBiasMeters: 0.010000
+      calibrationPlaneDepthBiasMeters: 0.002000
       cornerHandlePrefab: !<reference.ObjectPrefab> 96a05a18-6706-4297-ba0d-59e7e6af3c01
-      cornerHandleScaleMeters: 0.012000
+      cornerHandleScaleMeters: !<float> 1.000000
   ScriptTypes:
     "":
       {}
@@ -1428,7 +1429,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: -0.000002}
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
     Rotation: {x: -0.000027, y: -0.000005, z: -0.000012}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
