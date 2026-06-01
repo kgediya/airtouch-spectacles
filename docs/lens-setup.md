@@ -62,14 +62,14 @@ If `cornerHandlePrefab` is assigned, the Lens places one handle at each corner. 
 Packet streaming is confirm-gated by default. Create or keep a SceneObject named `ConfirmButton`, then wire its button callback to:
 
 ```txt
-AirTouchController.api.confirmAirTouch
+AirTouchController.confirmAirTouch
 ```
 
 The controller also exposes:
 
 ```txt
-AirTouchController.api.recalibrateAirTouch
-AirTouchController.api.onConfirmButtonTriggered
+AirTouchController.recalibrateAirTouch
+AirTouchController.onConfirmButtonTriggered
 ```
 
 ## Recalibration

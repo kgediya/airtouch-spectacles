@@ -124,7 +124,7 @@ Confirm:
 
 ```txt
 pinch / activate ConfirmButton
-or call AirTouchController.api.confirmAirTouch
+or call AirTouchController.confirmAirTouch
 ```
 
 Move finger, touch the plane, and test two-finger scroll.

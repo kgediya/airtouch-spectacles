@@ -154,7 +154,7 @@ After the fourth point:
 Confirm by activating a scene object named `ConfirmButton`, or call:
 
 ```txt
-AirTouchController.api.confirmAirTouch
+AirTouchController.confirmAirTouch
 ```
 
 ### 4. Interact

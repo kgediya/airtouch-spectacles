@@ -213,10 +213,6 @@ export class AirTouchController extends BaseScriptComponent {
 
     this.createEvent("OnStartEvent").bind(() => this.start())
     this.createEvent("UpdateEvent").bind(() => this.update())
-
-    ;(this as any).api.confirmAirTouch = () => this.confirmAirTouch()
-    ;(this as any).api.onConfirmButtonTriggered = () => this.confirmAirTouch()
-    ;(this as any).api.recalibrateAirTouch = () => this.recalibrateAirTouch()
   }
 
   private start(): void {
@@ -436,7 +432,7 @@ export class AirTouchController extends BaseScriptComponent {
 
     if (!hasSceneObject(this.confirmButton) && !this.loggedMissingConfirmButton) {
       this.loggedMissingConfirmButton = true
-      this.log("confirm button not found; create a SceneObject named ConfirmButton and wire its callback to api.confirmAirTouch")
+      this.log("confirm button not found; create a SceneObject named ConfirmButton and wire its callback to confirmAirTouch")
     }
 
     this.setConfirmButtonEnabled(false)
@@ -582,6 +578,10 @@ export class AirTouchController extends BaseScriptComponent {
     this.confirmFromButtonCallback()
   }
 
+  public onConfirmButtonTriggered(): void {
+    this.confirmFromButtonCallback()
+  }
+
   public recalibrateAirTouch(): void {
     this.resetCalibration()
   }
@@ -617,12 +617,11 @@ export class AirTouchController extends BaseScriptComponent {
 
     try {
       const script = this.confirmActionScript as any
-      const api = script.api
-      const callback = api ? api[this.confirmActionName] : null
+      const callback = script[this.confirmActionName]
       if (typeof callback === "function") {
-        callback()
+        callback.call(script)
       } else {
-        this.log("confirm callback not found on script api: " + this.confirmActionName)
+        this.log("confirm callback not found on script component: " + this.confirmActionName)
       }
     } catch (error) {
       this.log("confirm callback failed")

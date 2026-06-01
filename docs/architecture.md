@@ -122,4 +122,4 @@ wait for confirm button callback
 stream pointer packets
 ```
 
-The confirm gate keeps the desktop cursor idle while the user fine-tunes the plane. Calling `api.confirmAirTouch` enables packet streaming.
+The confirm gate keeps the desktop cursor idle while the user fine-tunes the plane. Calling the controller's public `confirmAirTouch` method enables packet streaming.
