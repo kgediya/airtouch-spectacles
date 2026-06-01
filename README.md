@@ -1,53 +1,96 @@
 # AirTouch
 
-AirTouch turns a laptop screen into a spatial touch surface using Snap Spectacles hand tracking.
+**Turn the screen you already own into the touchscreen you wish it had.**
 
-The Lens calibrates the physical display from four pinched corners, projects the tracked index fingertip onto that plane, streams normalized pointer packets over WebSocket, and a desktop companion converts those packets into OS mouse events.
+AirTouch is a Snap Spectacles prototype that makes a regular laptop display behave like a spatial touchscreen. The Lens tracks your fingertips, calibrates the physical display as a 3D plane, projects hand movement into screen coordinates, and streams pointer packets to a small macOS/Windows desktop companion that injects cursor events.
 
-This is not a hardware touchscreen. It is a spatial input layer for quick prototyping.
+No touchscreen overlay. No hardware mod. Just a calibrated screen plane, hand tracking, and a little bit of audacity.
 
-## Status
+> **Spectacular Prototypes #11**  
+> A spatial touch layer for laptops, built with Snap Spectacles.
 
-MVP implemented:
+## Demo
 
-- Spectacles hand tracking through Spectacles Interaction Kit
-- Four-corner pinch calibration
-- 3D fingertip projection to normalized UV coordinates
-- smoothing and deadzone
-- plane-touch mode for no-pinch click and drag
-- MeshBuilder calibration plane visual
-- optional manual corner handles and confirm-gated streaming
-- WebSocket streaming
-- macOS cursor movement, click, drag, and scroll
-- Windows cursor movement, click, drag, and scroll
-- Lens Studio editor simulator
-- desktop fake-hand simulator
-- recalibration command
+Add a public Google Drive `.mov` demo here when ready.
 
-Not implemented yet:
+```html
+<!-- Replace DRIVE_FILE_ID with the public Google Drive file id. -->
+<video
+  src="https://drive.google.com/uc?export=download&id=DRIVE_FILE_ID"
+  controls
+  muted
+  playsinline
+  width="100%">
+</video>
+```
 
-- multi-touch
-- pinch zoom gestures
+Markdown fallback:
+
+```md
+[Watch the AirTouch demo](https://drive.google.com/file/d/DRIVE_FILE_ID/view?usp=sharing)
+```
+
+## What It Feels Like
+
+```txt
+pinch four screen corners
+fine-tune the plane if needed
+confirm calibration
+touch the invisible plane
+the desktop clicks
+```
+
+AirTouch treats touch as a spatial relationship, not a hardware feature. If Spectacles know where your fingertip is relative to the laptop display, a normal screen can become an interactive surface.
+
+## Feature Snapshot
+
+| Area | Current Support |
+| --- | --- |
+| Calibration | Four-corner pinch calibration |
+| Plane Visual | MeshBuilder-generated screen plane |
+| Fine Tuning | Optional draggable corner handles |
+| Safety | Confirm-gated packet streaming |
+| Pointer | Hover, move, down, drag, up, out-of-bounds |
+| Touch | Plane collision touch mode, on by default |
+| Fallback | Pinch click/drag fallback |
+| Scroll | Two-finger index + middle scroll |
+| Desktop | macOS Quartz and Windows User32 |
+| Testing | Lens editor simulator, fake client, fake hand |
+| Transport | WebSocket over local network |
+
+Not yet implemented:
+
 - active fingertip marker rendering
+- pinch zoom
 - persistent anchors
 - automatic screen detection
-- polished in-Lens UI
+- true multi-touch desktop injection
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-  A[Spectacles Lens] --> B[SIK hand tracking]
-  B --> C[Pinch calibration]
-  C --> D[Screen plane projection]
-  D --> E[Pointer state machine]
-  E --> F[WebSocket JSON packets]
-  F --> G[Desktop companion]
-  G --> H{Platform}
-  H --> I[macOS Quartz events]
-  H --> J[Windows User32 events]
-  I --> K[Cursor / click / drag / scroll]
-  J --> K
+  subgraph Lens["Snap Spectacles Lens"]
+    A[SIK Hand Tracking] --> B[Four Corner Calibration]
+    B --> C[Screen Plane]
+    C --> D[MeshBuilder Plane Visual]
+    C --> E[Manual Corner Handles]
+    E --> C
+    C --> F[Fingertip Projection]
+    F --> G[Plane Touch + Gestures]
+    G --> H[Confirm Gate]
+    H --> I[WebSocket JSON]
+  end
+
+  subgraph Desktop["Desktop Companion"]
+    I --> J[WebSocket Server]
+    J --> K[Adaptive Pixel Smoothing]
+    K --> L{OS Backend}
+    L --> M[macOS Quartz]
+    L --> N[Windows User32]
+    M --> O[Cursor / Click / Drag / Scroll]
+    N --> O
+  end
 ```
 
 ## Repository Layout
@@ -55,112 +98,88 @@ flowchart LR
 ```txt
 AirTouch/
 ├── Assets/Scripts/AirTouch/       Lens Studio TypeScript
-├── Assets/Prefabs/                Optional Lens-side helper prefabs
-├── mac-companion/                 Cross-platform desktop companion
-├── docs/                          Architecture, protocol, setup, testing
-├── tsconfig.airtouch.json         Focused TypeScript check for AirTouch scripts
+├── Assets/Prefabs/                optional Lens helper prefabs
+├── mac-companion/                 cross-platform desktop companion
+├── docs/                          setup, protocol, architecture, testing
+├── AirTouch.esproj                Lens Studio project
+├── tsconfig.airtouch.json         focused AirTouch TypeScript check
 ├── LICENSE.md
 └── README.md
 ```
 
-The companion folder is still named `mac-companion` for continuity, but it now supports macOS and Windows.
+The folder is named `mac-companion` for historical reasons. It supports macOS and Windows.
 
 ## Quick Start
 
 ### 1. Start The Desktop Companion
 
-macOS or Windows:
+macOS:
 
 ```bash
 cd mac-companion
 python3 server.py --dry-run
 ```
 
-Windows may use `py` instead of `python3`:
+Windows:
 
 ```powershell
 cd mac-companion
 py server.py --dry-run
 ```
 
-Dry-run prints events without moving the cursor.
+Dry-run prints cursor events without moving the real mouse.
 
 ### 2. Configure The Lens
 
 Open `AirTouch.esproj` in Lens Studio.
 
-Attach `Assets/Scripts/AirTouch/AirTouchController.ts` to a scene object.
+Enable **Experimental API mode**. AirTouch uses `InternetModule` for WebSocket networking, and `ws://` connections can be blocked when Experimental APIs are disabled.
 
-Enable Lens Studio Experimental API mode before testing WebSocket networking. AirTouch uses `InternetModule`, and Lens Studio/Spectacles can block `ws://` connections when Experimental APIs are disabled.
-
-Set `websocketUrl`:
+Set the controller URL:
 
 ```txt
-ws://YOUR_DESKTOP_IP:8765
+websocketUrl = ws://YOUR_DESKTOP_IP:8765
 ```
 
 Example:
 
 ```txt
-ws://192.168.0.179:8765
+websocketUrl = ws://192.168.0.179:8765
 ```
 
-Do not use `127.0.0.1` on Spectacles. On device, that points to Spectacles, not your desktop.
+Do not use `127.0.0.1` on Spectacles. On device, localhost means Spectacles, not your laptop.
 
-### 3. Run On Spectacles
+### 3. Calibrate
 
-Make sure Spectacles and the desktop are on the same network.
-
-Start the Lens. The companion terminal should print:
-
-```txt
-client connected: ...
-```
-
-### 4. Calibrate
-
-Pinch the screen corners in order:
+Pinch the laptop display corners in this order:
 
 ```txt
 Top Left -> Top Right -> Bottom Left -> Bottom Right
 ```
 
-After calibration:
+After the fourth point:
+
+- AirTouch builds the screen plane.
+- A MeshBuilder plane visual appears when enabled.
+- Corner handles appear if `cornerHandlePrefab` is assigned.
+- Packet streaming waits for confirmation.
+
+Confirm by activating a scene object named `ConfirmButton`, or call:
 
 ```txt
-hover -> cursor move
-touch calibrated screen plane -> mouse down
-hold touch + move -> drag
-lift away from plane -> mouse up
-pinch still works as an optional click/drag fallback
-index + middle fingertips move together -> scroll
-optional legacy scroll mode -> pinch hold + move in the hover band scrolls
+AirTouchController.api.confirmAirTouch
 ```
 
-Optional confirm gate workflow:
+### 4. Interact
 
 ```txt
-after calibration, corner handles + plane visual appear
-move corner handles manually to fine-tune the mapped screen plane
-confirm button appears above the plane
-pinch on the confirm button to enable pointer packet streaming
-confirm button hides after successful confirm
+finger inside bounds       -> move cursor
+touch calibrated plane     -> mouse down
+hold touch + move          -> drag
+lift away from plane       -> mouse up
+pinch inside bounds        -> fallback click/drag
+index + middle together    -> scroll
 ```
-
-Confirm button integration:
-
-```txt
-AirTouchController does not auto-create the confirm button
-it looks for an existing SceneObject named ConfirmButton
-the controller only toggles ConfirmButton visibility
-wire your button callback to AirTouchController api.confirmAirTouch
-```
-
-Fingertip visual inputs are present for future authored feedback, but active fingertip marker rendering is currently disabled.
-
-Manual corner handles and confirm-gate behavior are enabled in the controller by default, with optional callback support on confirm.
-
-The calibrated plane visual is generated with Lens Studio `MeshBuilder` and can use `calibrationPlaneMaterial` for consistent visibility.
 
 ### 5. Move The Real Cursor
 
@@ -178,78 +197,125 @@ Windows:
 py server.py
 ```
 
-## Lens Studio Editor Simulator
-
-`enableEditorSimulator` is on by default.
-
-In the Lens Studio editor preview:
+macOS may require Accessibility permission for Terminal, Python, or your IDE:
 
 ```txt
-press -> mouse down
-drag -> mouse dragged
-release -> mouse up
+System Settings -> Privacy & Security -> Accessibility
 ```
 
-Use `ws://127.0.0.1:8765` when testing from the editor on the same desktop as the companion.
+Windows may require allowing Python through Windows Firewall for inbound WebSocket connections.
 
-## Fake Hand Desktop Test
+## Lens Inputs That Matter
 
-To test the desktop companion without Lens Studio or Spectacles:
+```txt
+websocketUrl = ws://DESKTOP_IP:8765
+handType = right
+enablePlaneTouchMode = true
+touchThresholdMeters = 0.04
+touchReleaseThresholdMeters = 0.065
+enableTwoFingerScroll = true
+twoFingerScrollRequiresPlaneTouch = true
+enableCalibrationPlaneVisual = true
+autoCreateCalibrationPlaneVisual = true
+calibrationPlaneMaterial = optional Material
+cornerHandlePrefab = optional ObjectPrefab
+debugLogging = false for lowest latency
+```
+
+Plane touch uses hysteresis: `touchThresholdMeters` starts the press, `touchReleaseThresholdMeters` releases it. Keep release larger than touch to avoid rapid click chatter.
+
+## Desktop Precision
+
+The desktop companion smooths pointer input in pixel space before injecting OS events. Defaults live in [mac-companion/config.json](mac-companion/config.json):
+
+```json
+{
+  "pointer_smoothing": {
+    "enabled": true,
+    "deadzone_pixels": 1.0,
+    "hover_alpha_min": 0.48,
+    "hover_alpha_max": 0.92,
+    "drag_alpha_min": 0.58,
+    "drag_alpha_max": 0.96,
+    "click_snap_alpha": 1.0,
+    "click_hold_pixels": 5,
+    "speed_pixels_for_max_alpha": 45,
+    "scroll_alpha": 0.55
+  }
+}
+```
+
+For the lowest latency test:
+
+```json
+{
+  "pointer_smoothing": {
+    "enabled": false
+  }
+}
+```
+
+If raw input is fast but shaky, turn smoothing back on and tune `deadzone_pixels`, `hover_alpha_min`, and `drag_alpha_min`.
+
+## Fake Testing
+
+Desktop-only fake packets:
 
 ```bash
-python3 server.py --fake-hand
+cd mac-companion
+python3 server.py --dry-run
+python3 fake_client.py
+python3 fake_client.py --drag
+python3 fake_client.py --scroll
 ```
 
-Preview the same path without moving the cursor:
+Windows:
+
+```powershell
+cd mac-companion
+py server.py --dry-run
+py fake_client.py --drag
+```
+
+Fake hand simulation:
 
 ```bash
 python3 server.py --dry-run --fake-hand
 ```
 
-The fake-hand path includes hover, click, drag, and scroll packets.
+## Protocol
 
-## Platform Notes
+AirTouch sends JSON text frames over WebSocket:
 
-macOS:
-
-- Real cursor injection uses Quartz through PyObjC.
-- If events are ignored, grant Accessibility permission to Terminal, Python, or your IDE.
-- Install optional dependency if needed:
-
-```bash
-python3 -m pip install --user -r mac-companion/requirements-macos.txt
+```json
+{
+  "type": "pointer",
+  "u": 0.42,
+  "v": 0.66,
+  "pinch": true,
+  "phase": "drag",
+  "distanceToPlane": 0.018,
+  "timestamp": 123456789
+}
 ```
 
-Windows:
+`pinch` means “desktop press is active.” It may come from a real pinch fallback or from plane-touch collision.
 
-- Real cursor injection uses `ctypes` + User32, so no Python package is required.
-- If events are ignored, try running the terminal normally first, then as Administrator if needed.
-- Allow Python through Windows Firewall for inbound WebSocket connections.
+Pointer phases:
 
-## Network Troubleshooting
+```txt
+hover
+down
+move
+drag
+up
+scroll
+outOfBounds
+```
 
-If `ws://DESKTOP_IP:8765` fails from Spectacles:
+See [docs/protocol.md](docs/protocol.md) for packet details.
 
-- confirm Lens Studio Experimental API mode is enabled
-- confirm the port is included
-- confirm both devices are on the same Wi-Fi
-- confirm firewall allows incoming connections on port `8765`
-- confirm the companion terminal shows `AirTouch desktop companion listening`
-
-The Lens auto-normalizes local URLs like `ws://192.168.0.179` to `ws://192.168.0.179:8765`, but it is still better to type the port explicitly.
-
-## Documentation
-
-- [Architecture](docs/architecture.md)
-- [Desktop Setup](docs/desktop-setup.md)
-- [Lens Setup](docs/lens-setup.md)
-- [Protocol](docs/protocol.md)
-- [Testing Checklist](docs/testing-checklist.md)
-- [Concept Note](docs/concept-note.md)
-- [Development](docs/development.md)
-- [Contributing](CONTRIBUTING.md)
-
-## Development
+## Developer Notes
 
 Run checks:
 
@@ -258,6 +324,48 @@ tsc --project tsconfig.airtouch.json
 PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile mac-companion/server.py mac-companion/mouse_controller.py mac-companion/fake_client.py
 ```
 
+Windows:
+
+```powershell
+tsc --project tsconfig.airtouch.json
+py -m py_compile mac-companion/server.py mac-companion/mouse_controller.py mac-companion/fake_client.py
+```
+
+Useful docs:
+
+- [Lens Setup](docs/lens-setup.md)
+- [Desktop Setup](docs/desktop-setup.md)
+- [Architecture](docs/architecture.md)
+- [Protocol](docs/protocol.md)
+- [Testing Checklist](docs/testing-checklist.md)
+- [Development](docs/development.md)
+- [Contributing](CONTRIBUTING.md)
+
+## Notes And Risks
+
+AirTouch is a prototype, not a production accessibility device.
+
+The hard parts are exactly the fun parts:
+
+- calibration accuracy
+- hand tracking jitter
+- latency across Lens, network, and desktop injection
+- tiny UI targets
+- drift after head or laptop movement
+
+Quick fixes when testing:
+
+- turn `debugLogging` off on device
+- keep Spectacles and desktop on the same local network
+- recalibrate if the virtual plane drifts
+- tune desktop smoothing after checking raw input
+
+## Transport
+
+The current MVP uses WebSocket because it is easy to debug from Lens Studio and works well with a local desktop companion.
+
+Lens Studio exposes Bluetooth GATT APIs, so BLE experiments are possible, but AirTouch does not currently ship a BLE transport. A BLE version would need a desktop GATT peripheral, compact packets, MTU handling, and reconnect logic.
+
 ## License
 
-This project is released under the terms in [LICENSE.md](LICENSE.md). Lens Studio, Spectacles, Spectacles Interaction Kit, and related Snap/Specs developer tools remain subject to their own terms.
+AirTouch is released under the terms in [LICENSE.md](LICENSE.md). Lens Studio, Spectacles, Spectacles Interaction Kit, and related Snap/Specs developer tools remain subject to their own terms.
