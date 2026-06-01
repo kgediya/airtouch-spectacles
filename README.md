@@ -13,11 +13,9 @@ No touchscreen overlay. No hardware mod. Just a calibrated screen plane, hand tr
 
 Watch the prototype in action:
 
-[![AirTouch demo preview](README-assets/airtouch-demo-preview.gif)](https://drive.google.com/file/d/1D5nzdaDZQ5WsDa0ESgJ7yowhgmUUc25y/view?usp=drive_link)
+[![AirTouch demo preview](README-assets/airtouch-demo-preview.gif)](https://drive.google.com/file/d/1ugl3otYg8ZDUduHIWbYB7V2vIUHvcVgG/view?usp=sharing)
 
-[Watch the hosted AirTouch demo GIF](https://i.postimg.cc/GhpGxJjT/airtouch-demo-preview.gif)  
-[Watch the AirTouch demo GIF](https://drive.google.com/file/d/1D5nzdaDZQ5WsDa0ESgJ7yowhgmUUc25y/view?usp=drive_link)  
-[Watch the full quality AirTouch demo video](https://drive.google.com/file/d/1ugl3otYg8ZDUduHIWbYB7V2vIUHvcVgG/view?usp=sharing)
+[Watch the full AirTouch demo video](https://drive.google.com/file/d/1ugl3otYg8ZDUduHIWbYB7V2vIUHvcVgG/view?usp=sharing)
 
 ## What It Feels Like
 
