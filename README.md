@@ -11,12 +11,13 @@ No touchscreen overlay. No hardware mod. Just a calibrated screen plane, hand tr
 
 ## Demo
 
-Add a public Google Drive `.mov` demo here when ready.
+Watch the prototype in action:
+
+[AirTouch demo video](https://drive.google.com/file/d/1ugl3otYg8ZDUduHIWbYB7V2vIUHvcVgG/view?usp=sharing)
 
 ```html
-<!-- Replace DRIVE_FILE_ID with the public Google Drive file id. -->
 <video
-  src="https://drive.google.com/uc?export=download&id=DRIVE_FILE_ID"
+  src="https://drive.google.com/uc?export=download&id=1ugl3otYg8ZDUduHIWbYB7V2vIUHvcVgG"
   controls
   muted
   playsinline
@@ -27,7 +28,7 @@ Add a public Google Drive `.mov` demo here when ready.
 Markdown fallback:
 
 ```md
-[Watch the AirTouch demo](https://drive.google.com/file/d/DRIVE_FILE_ID/view?usp=sharing)
+[Watch the AirTouch demo](https://drive.google.com/file/d/1ugl3otYg8ZDUduHIWbYB7V2vIUHvcVgG/view?usp=sharing)
 ```
 
 ## What It Feels Like
