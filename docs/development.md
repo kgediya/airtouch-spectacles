@@ -1,5 +1,11 @@
 # Development
 
+## Project-Wide Codex Use
+
+AirTouch was developed with Codex throughout the project, including its original implementation. Codex assisted with the Spectacles Lens architecture, hand and pinch input, four-point calibration, plane-touch and scrolling interactions, WebSocket transport, macOS and Windows input injection, smoothing and prediction, fake-input tooling, validation, and documentation.
+
+The project author directed the product concept, interaction design, hardware testing, tuning, and final engineering decisions.
+
 ## Recent Extension Record
 
 On 2026-07-16, AirTouch received a meaningful Lens and desktop reviewability extension developed with Codex powered by GPT-5.6.
@@ -17,7 +23,7 @@ The extension adds:
 - a deterministic desktop demo client covering hover, click, drag, scroll, and safety release
 - aligned macOS, Windows, Lens, architecture, and reviewer documentation
 
-Codex was used to inspect the codebase, trace calibration and packet behavior across both runtimes, implement the solver and demo tooling, and run TypeScript/Python checks. GPT-5.6 supported the implementation reasoning and documentation pass. Product direction, hardware testing, and final acceptance remain with the project author.
+For this extension, Codex was used to inspect the codebase, trace calibration and packet behavior across both runtimes, implement the solver and demo tooling, and run TypeScript/Python checks. GPT-5.6 supported the implementation reasoning and documentation pass.
 
 ## Prerequisites
 

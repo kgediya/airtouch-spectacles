@@ -114,7 +114,9 @@ The desktop companion supports macOS and Windows.
 
 ## Built With Codex And GPT-5.6
 
-AirTouch's recent accuracy and reviewability work was developed with Codex powered by GPT-5.6. Codex helped inspect the existing Lens and desktop architecture, identify that the fourth calibration corner was not participating in pointer projection, implement and validate a bilinear four-corner UV solver, build the deterministic desktop demo client, and keep the cross-platform documentation aligned with the code.
+AirTouch was developed end to end with Codex as an implementation partner. That collaboration covered the original Spectacles Lens, hand tracking and gesture logic, screen-plane calibration, WebSocket protocol, macOS and Windows desktop companion, cursor smoothing, testing tools, and project documentation.
+
+The recent accuracy and reviewability extension was developed with Codex powered by GPT-5.6. Codex helped inspect the existing Lens and desktop architecture, identify that the fourth calibration corner was not participating in pointer projection, implement and validate a bilinear four-corner UV solver, build the deterministic desktop demo client, and keep the cross-platform documentation aligned with the code.
 
 The important product decisions stayed human-directed: preserve direct spatial touch as the core experience, make all four physical screen corners count, keep the desktop protocol inspectable, and provide a useful test path for people without Spectacles hardware.
 

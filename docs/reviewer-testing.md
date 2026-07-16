@@ -60,7 +60,7 @@ python3 server.py
 
 ## Development Notes
 
-Codex powered by GPT-5.6 was used as an implementation partner for AirTouch's recent Lens accuracy and reviewability extension. It helped inspect the Lens and desktop code, identify and replace the three-corner projection behavior with a true four-corner bilinear mapping, add the deterministic desktop demo client, update setup documentation, and run TypeScript/Python validation checks.
+AirTouch as a whole, including its original Lens and desktop companion implementation, was developed with Codex as an implementation partner. For the recent Lens accuracy and reviewability extension, Codex powered by GPT-5.6 helped inspect the Lens and desktop code, identify and replace the three-corner projection behavior with a true four-corner bilinear mapping, add the deterministic desktop demo client, update setup documentation, and run TypeScript/Python validation checks.
 
 Product and engineering decisions remained explicit:
 
