@@ -17,6 +17,22 @@ Watch the prototype in action:
 
 [Watch the full AirTouch demo video](https://drive.google.com/file/d/1ugl3otYg8ZDUduHIWbYB7V2vIUHvcVgG/view?usp=sharing)
 
+## Review And No-Hardware Demo
+
+AirTouch is meant to be experienced with Snap Spectacles, but the desktop companion can also be reviewed without wearable hardware. The repo includes a deterministic WebSocket demo client that simulates the Lens packet stream.
+
+Run the companion in dry-run mode, then send the demo sequence:
+
+```bash
+cd desktop-companion
+python3 server.py --dry-run
+python3 demo_client.py
+```
+
+The sequence exercises hover, plane-touch click, drag, two-finger-style scroll, and out-of-bounds release. Use dry-run logs for safe review, or run the server without `--dry-run` to move the real cursor on macOS/Windows.
+
+See [docs/reviewer-testing.md](docs/reviewer-testing.md) for detailed test paths and expected output.
+
 ## What It Feels Like
 
 ```txt
@@ -270,6 +286,13 @@ Fake hand simulation:
 python3 server.py --dry-run --fake-hand
 ```
 
+No-hardware demo without Spectacles:
+
+```bash
+python3 server.py --dry-run
+python3 demo_client.py
+```
+
 ## Protocol
 
 AirTouch sends JSON text frames over WebSocket:
@@ -308,18 +331,19 @@ Run checks:
 
 ```bash
 tsc --project tsconfig.airtouch.json
-PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py
+PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py desktop-companion/demo_client.py
 ```
 
 Windows:
 
 ```powershell
 tsc --project tsconfig.airtouch.json
-py -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py
+py -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py desktop-companion/demo_client.py
 ```
 
 Useful docs:
 
+- [Reviewer Testing](docs/reviewer-testing.md)
 - [Lens Setup](docs/lens-setup.md)
 - [Desktop Setup](docs/desktop-setup.md)
 - [Architecture](docs/architecture.md)

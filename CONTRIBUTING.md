@@ -31,14 +31,14 @@ Before opening a PR or sharing changes:
 
 ```bash
 tsc --project tsconfig.airtouch.json
-PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py
+PYTHONPYCACHEPREFIX=/tmp/airtouch_pycache python3 -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py desktop-companion/demo_client.py
 ```
 
 Windows:
 
 ```powershell
 tsc --project tsconfig.airtouch.json
-py -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py
+py -m py_compile desktop-companion/server.py desktop-companion/mouse_controller.py desktop-companion/fake_client.py desktop-companion/demo_client.py
 ```
 
 ## Scope

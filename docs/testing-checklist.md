@@ -15,6 +15,7 @@ Run fake client:
 python3 fake_client.py
 python3 fake_client.py --drag
 python3 fake_client.py --scroll
+python3 demo_client.py
 ```
 
 Windows:
@@ -23,6 +24,17 @@ Windows:
 py fake_client.py
 py fake_client.py --drag
 py fake_client.py --scroll
+py demo_client.py
+```
+
+Expected demo client coverage:
+
+```txt
+hover path emits move events
+center touch emits down/up
+diagonal hold emits drag
+scroll packets emit wheel events
+outOfBounds releases active press
 ```
 
 Expected output:

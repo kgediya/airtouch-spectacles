@@ -55,10 +55,20 @@ python3 fake_client.py --drag
 python3 fake_client.py --scroll
 ```
 
+Demo client sequence:
+
+```bash
+python3 server.py --dry-run
+python3 demo_client.py
+```
+
+The demo client sends hover, click, drag, scroll, and out-of-bounds packets over WebSocket so AirTouch can be tested without Spectacles hardware.
+
 Windows can run the same commands with `py`:
 
 ```powershell
 py fake_client.py --scroll
+py demo_client.py
 ```
 
 ## Configuration

@@ -29,6 +29,12 @@ python3 fake_client.py --drag
 python3 fake_client.py --scroll
 ```
 
+Run the full demo client sequence without Spectacles:
+
+```bash
+python3 demo_client.py
+```
+
 If the cursor does not move, grant Accessibility permission:
 
 ```txt
@@ -68,6 +74,12 @@ py fake_client.py --drag
 py fake_client.py --scroll
 ```
 
+Run the full demo client sequence without Spectacles:
+
+```powershell
+py demo_client.py
+```
+
 Find your IP:
 
 ```powershell
@@ -103,6 +115,22 @@ On Windows, use:
 py server.py --dry-run --fake-hand
 py server.py --fake-hand
 ```
+
+## Demo Client
+
+For review or smoke testing, run the companion in one terminal:
+
+```bash
+python3 server.py --dry-run
+```
+
+Then run:
+
+```bash
+python3 demo_client.py
+```
+
+The script connects over WebSocket and sends a deterministic interaction sequence that covers hover, click, drag, scroll, and out-of-bounds release.
 
 ## Pointer Precision
 
