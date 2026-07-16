@@ -27,6 +27,7 @@
     "./Assets/Scripts/AirTouchController.ts",
     "./Assets/Scripts/InteractionStateMachine.ts",
     "./Assets/Scripts/NetworkSender.ts",
+    "./Assets/Scripts/ScreenProjectionMath.ts",
     "./Assets/Scripts/ScreenProjection.ts"
   ]
 }

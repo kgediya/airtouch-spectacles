@@ -1,3 +1,6 @@
+import {isConvexScreenQuad, solveBilinearUv} from "./ScreenProjectionMath"
+import type {Point2} from "./ScreenProjectionMath"
+
 export type ScreenCalibrationPoints = {
   topLeft: vec3
   topRight: vec3
@@ -16,42 +19,91 @@ export type ScreenProjectionResult = {
   touchPlane: boolean
 }
 
+export type CalibrationQuality = {
+  averageWidthMeters: number
+  averageHeightMeters: number
+  maxCornerPlaneErrorMeters: number
+}
+
 export class ScreenProjection {
-  private topLeft!: vec3
+  private planeCenter!: vec3
   private rightAxis!: vec3
   private downAxis!: vec3
   private screenNormal!: vec3
-  private screenWidth = 0
-  private screenHeight = 0
+  private topLeft2d!: Point2
+  private topRight2d!: Point2
+  private bottomLeft2d!: Point2
+  private bottomRight2d!: Point2
+  private quality: CalibrationQuality | null = null
   private calibrated = false
 
   setCalibration(points: ScreenCalibrationPoints): boolean {
-    const rightVector = points.topRight.sub(points.topLeft)
-    const downVector = points.bottomLeft.sub(points.topLeft)
-    const width = rightVector.length
-    const height = downVector.length
+    const topEdge = points.topRight.sub(points.topLeft)
+    const bottomEdge = points.bottomRight.sub(points.bottomLeft)
+    const leftEdge = points.bottomLeft.sub(points.topLeft)
+    const rightEdge = points.bottomRight.sub(points.topRight)
+    const averageRight = topEdge.add(bottomEdge)
+    const averageDown = leftEdge.add(rightEdge)
+    const normal = averageRight.cross(averageDown)
+    const averageWidth = (topEdge.length + bottomEdge.length) * 0.5
+    const averageHeight = (leftEdge.length + rightEdge.length) * 0.5
 
-    if (width <= 0.001 || height <= 0.001) {
-      this.calibrated = false
+    if (averageWidth <= 0.001 || averageHeight <= 0.001 || normal.length <= 0.000001) {
+      this.reset()
       return false
     }
 
-    this.topLeft = points.topLeft
-    this.rightAxis = rightVector.normalize()
-    this.downAxis = downVector.normalize()
-    this.screenNormal = this.rightAxis.cross(this.downAxis).normalize()
-    this.screenWidth = width
-    this.screenHeight = height
+    this.planeCenter = points.topLeft.add(points.topRight).add(points.bottomLeft).add(points.bottomRight).uniformScale(0.25)
+    this.rightAxis = averageRight.normalize()
+    this.screenNormal = normal.normalize()
+    this.downAxis = this.screenNormal.cross(this.rightAxis).normalize()
+    this.topLeft2d = this.toPlanePoint(points.topLeft)
+    this.topRight2d = this.toPlanePoint(points.topRight)
+    this.bottomLeft2d = this.toPlanePoint(points.bottomLeft)
+    this.bottomRight2d = this.toPlanePoint(points.bottomRight)
+
+    if (!isConvexScreenQuad(this.topLeft2d, this.topRight2d, this.bottomLeft2d, this.bottomRight2d)) {
+      this.reset()
+      return false
+    }
+
+    const cornerUv = solveBilinearUv(
+      this.bottomRight2d,
+      this.topLeft2d,
+      this.topRight2d,
+      this.bottomLeft2d,
+      this.bottomRight2d
+    )
+    if (cornerUv === null) {
+      this.reset()
+      return false
+    }
+
+    this.quality = {
+      averageWidthMeters: averageWidth,
+      averageHeightMeters: averageHeight,
+      maxCornerPlaneErrorMeters: Math.max(
+        Math.abs(points.topLeft.sub(this.planeCenter).dot(this.screenNormal)),
+        Math.abs(points.topRight.sub(this.planeCenter).dot(this.screenNormal)),
+        Math.abs(points.bottomLeft.sub(this.planeCenter).dot(this.screenNormal)),
+        Math.abs(points.bottomRight.sub(this.planeCenter).dot(this.screenNormal))
+      )
+    }
     this.calibrated = true
     return true
   }
 
   reset(): void {
     this.calibrated = false
+    this.quality = null
   }
 
   isCalibrated(): boolean {
     return this.calibrated
+  }
+
+  getCalibrationQuality(): CalibrationQuality | null {
+    return this.quality
   }
 
   project(fingerPosition: vec3, touchThresholdMeters: number, hoverThresholdMeters: number): ScreenProjectionResult | null {
@@ -59,9 +111,20 @@ export class ScreenProjection {
       return null
     }
 
-    const relative = fingerPosition.sub(this.topLeft)
-    const rawU = relative.dot(this.rightAxis) / this.screenWidth
-    const rawV = relative.dot(this.downAxis) / this.screenHeight
+    const relative = fingerPosition.sub(this.planeCenter)
+    const uv = solveBilinearUv(
+      {x: relative.dot(this.rightAxis), y: relative.dot(this.downAxis)},
+      this.topLeft2d,
+      this.topRight2d,
+      this.bottomLeft2d,
+      this.bottomRight2d
+    )
+    if (uv === null) {
+      return null
+    }
+
+    const rawU = uv.u
+    const rawV = uv.v
     const distanceToPlane = relative.dot(this.screenNormal)
     const insideBounds = rawU >= 0 && rawU <= 1 && rawV >= 0 && rawV <= 1
     const absoluteDistance = Math.abs(distanceToPlane)
@@ -76,6 +139,11 @@ export class ScreenProjection {
       nearPlane: absoluteDistance <= hoverThresholdMeters,
       touchPlane: absoluteDistance <= touchThresholdMeters
     }
+  }
+
+  private toPlanePoint(point: vec3): Point2 {
+    const relative = point.sub(this.planeCenter)
+    return {x: relative.dot(this.rightAxis), y: relative.dot(this.downAxis)}
   }
 }
 

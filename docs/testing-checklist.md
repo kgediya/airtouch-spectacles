@@ -1,5 +1,12 @@
 # Testing Checklist
 
+## Automated Checks
+
+```bash
+npx tsc --project tsconfig.airtouch.json
+node tests/ScreenProjectionMath.test.ts
+```
+
 ## Desktop Only
 
 Start dry-run:
@@ -122,7 +129,19 @@ Expected Lens log:
 
 ```txt
 [AirTouch] calibration complete
+[AirTouch] calibration fit width=...m height=...m planeError=...m
 ```
+
+Verify each sampled corner after confirmation:
+
+```txt
+top left     -> rawU approximately 0, rawV approximately 0
+top right    -> rawU approximately 1, rawV approximately 0
+bottom left  -> rawU approximately 0, rawV approximately 1
+bottom right -> rawU approximately 1, rawV approximately 1
+```
+
+Cross two corner samples or place two samples nearly on top of one another and verify that calibration is rejected and restarts.
 
 Expected Lens scene:
 

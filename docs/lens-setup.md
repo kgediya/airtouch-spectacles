@@ -53,7 +53,10 @@ The Lens logs:
 [AirTouch] pinch Top Left
 [AirTouch] saved Top Left
 [AirTouch] calibration complete
+[AirTouch] calibration fit width=0.302m height=0.196m planeError=0.0012m
 ```
+
+All four sampled corners participate in projection. AirTouch fits a local plane, validates that the corners form a usable quadrilateral, and applies a bilinear UV solve so the bottom-right sample is not ignored. Crossed or degenerate samples restart calibration.
 
 After the four pinches, AirTouch shows the generated calibration plane and any available corner handles. The plane is built with `MeshBuilder` from the four calibrated points. Assign `calibrationPlaneMaterial` for predictable color/opacity.
 

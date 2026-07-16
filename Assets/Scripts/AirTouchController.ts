@@ -911,9 +911,9 @@ export class AirTouchController extends BaseScriptComponent {
     }
 
     const corner = this.corners[this.cornerIndex]
-  const point = cloneVec3(this.hand.indexTip.position)
-  this.points[corner] = point
-  this.placeCornerHandle(corner, point)
+    const point = cloneVec3(this.hand.indexTip.position)
+    this.points[corner] = point
+    this.placeCornerHandle(corner, point)
     this.cornerIndex += 1
     this.log("saved " + this.cornerLabels[this.cornerIndex - 1])
 
@@ -932,6 +932,7 @@ export class AirTouchController extends BaseScriptComponent {
       this.packetsEnabled = !this.requireConfirmBeforeSending
       this.setConfirmButtonEnabled(this.requireConfirmBeforeSending)
       this.log("calibration complete")
+      this.logCalibrationQuality()
     } else {
       this.log("calibration failed; pinch corners again")
       this.resetCalibration()
@@ -1022,6 +1023,27 @@ export class AirTouchController extends BaseScriptComponent {
         projected.nearPlane +
         " touch=" +
         projected.touchPlane
+    )
+  }
+
+  private logCalibrationQuality(): void {
+    if (!this.debugLogging) {
+      return
+    }
+
+    const quality = this.projection.getCalibrationQuality()
+    if (quality === null) {
+      return
+    }
+
+    this.log(
+      "calibration fit width=" +
+        quality.averageWidthMeters.toFixed(3) +
+        "m height=" +
+        quality.averageHeightMeters.toFixed(3) +
+        "m planeError=" +
+        quality.maxCornerPlaneErrorMeters.toFixed(4) +
+        "m"
     )
   }
 

@@ -49,7 +49,7 @@ AirTouch treats touch as a spatial relationship, not a hardware feature. If Spec
 
 | Area | Current Support |
 | --- | --- |
-| Calibration | Four-corner pinch calibration |
+| Calibration | True four-corner quadrilateral calibration |
 | Plane Visual | MeshBuilder-generated screen plane |
 | Fine Tuning | Optional draggable corner handles |
 | Safety | Confirm-gated packet streaming |
@@ -112,6 +112,14 @@ AirTouch/
 
 The desktop companion supports macOS and Windows.
 
+## Built With Codex And GPT-5.6
+
+AirTouch's recent accuracy and reviewability work was developed with Codex powered by GPT-5.6. Codex helped inspect the existing Lens and desktop architecture, identify that the fourth calibration corner was not participating in pointer projection, implement and validate a bilinear four-corner UV solver, build the deterministic desktop demo client, and keep the cross-platform documentation aligned with the code.
+
+The important product decisions stayed human-directed: preserve direct spatial touch as the core experience, make all four physical screen corners count, keep the desktop protocol inspectable, and provide a useful test path for people without Spectacles hardware.
+
+See [docs/development.md](docs/development.md) for the dated extension record and validation commands.
+
 ## Quick Start
 
 ### 1. Start The Desktop Companion
@@ -162,7 +170,7 @@ Top Left -> Top Right -> Bottom Left -> Bottom Right
 
 After the fourth point:
 
-- AirTouch builds the screen plane.
+- AirTouch fits a stable plane and a four-corner quadrilateral UV map.
 - A MeshBuilder plane visual appears when enabled.
 - Corner handles appear if `cornerHandlePrefab` is assigned.
 - Packet streaming waits for confirmation.

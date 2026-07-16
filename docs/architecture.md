@@ -44,13 +44,20 @@ flowchart TD
 - detects index/middle two-finger scroll
 - builds and updates the calibration plane visual with `MeshBuilder`
 - places optional manual corner handles when `cornerHandlePrefab` is assigned
-- exposes confirm/recalibrate callbacks through `api`
+- exposes public confirm/recalibrate methods for Lens Studio callbacks
 - provides Lens Studio editor simulation
 
 `ScreenProjection.ts`
 
 - stores the calibrated screen plane
-- projects 3D fingertip positions into normalized `u/v`
+- fits an orthogonal plane frame from all four sampled edges
+- projects 3D fingertip positions into that frame
+- maps the projected point through the four-corner bilinear UV solver
+
+`ScreenProjectionMath.ts`
+
+- contains the runtime-independent quadrilateral validation and bilinear inverse solver
+- makes all four calibration points map to their exact normalized corners
 
 `InteractionStateMachine.ts`
 
@@ -123,3 +130,16 @@ stream pointer packets
 ```
 
 The confirm gate keeps the desktop cursor idle while the user fine-tunes the plane. Calling the controller's public `confirmAirTouch` method enables packet streaming.
+
+## Four-Corner Projection
+
+AirTouch does not assume the sampled screen is a perfect rectangle. It projects all four corner samples into a stable local plane, treats them as a quadrilateral, and numerically inverts the bilinear surface for every fingertip sample.
+
+```txt
+top left     -> u=0, v=0
+top right    -> u=1, v=0
+bottom left  -> u=0, v=1
+bottom right -> u=1, v=1
+```
+
+This removes the previous bottom-right drift caused by deriving UV only from the top and left edges. Concave, crossed, or degenerate corner samples are rejected and calibration restarts.
